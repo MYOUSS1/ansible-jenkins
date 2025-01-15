@@ -1,20 +1,21 @@
-- name: install nginx
-  yum: 
-    name:
-      - nginx
-    state: present
-    update_cache: yes
-    cache_valid_time: 3600
-  become: yes
+- name: Installer Nginx selon le système
+  hosts: all
+  become: true
+  tasks:
+    - name: Installer Nginx sur Debian/Ubuntu
+      apt:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
 
-- name: start nginx
-  service:
-    name: nginx
-    state: started
-  become: yes
+    - name: Installer Nginx sur RedHat/CentOS
+      yum:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
 
-- name: index
-  template:
-    src: index.html.j2
-    dest: /var/www/html/index.html
-
+    - name: Installer Nginx sur Fedora
+      dnf:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "Fedora"
